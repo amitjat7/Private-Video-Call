@@ -30,7 +30,7 @@ A browser-based peer-to-peer encrypted video calling app built with WebRTC, Node
    ```bash
    npm install
 
-4. Copy .env.example to .env
+4. Copy .env.example to .env OR (Rename .env.example to .env)
    ```bash
    cp .env.example .env
 
@@ -43,7 +43,8 @@ A browser-based peer-to-peer encrypted video calling app built with WebRTC, Node
    npm start
 
 10. Ngrok public URL will appear in terminal — share it!
-    example:
+    Your project will be live on the url...
+    example:👇
     ```bash
     https://refinery-hatbox-shout.ngrok-free.dev/
 
