@@ -30,13 +30,14 @@ A browser-based peer-to-peer encrypted video calling app built with WebRTC, Node
    ```bash
    npm install
 
-4. Copy .env.example to .env OR (Rename .env.example to .env)
+4. Copy .env.example to .env OR (Rename .env.example  to  .env)
    ```bash
    cp .env.example .env
 
-6. Add your Ngrok token in .env file
+6. Add your Ngrok token and PORT in .env file
    ```bash
    NGROK_AUTHTOKEN=your_token_here
+   PORT=
 
 8. Start the server
    ```bash
