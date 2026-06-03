@@ -27,18 +27,25 @@ A browser-based peer-to-peer encrypted video calling app built with WebRTC, Node
    cd instant-video-call
 
 2. Install Dependencies
-npm install
+   ```bash
+   npm install
 
-3. Copy .env.example to .env
-cp .env.example .env
+4. Copy .env.example to .env
+   ```bash
+   cp .env.example .env
 
-4. Add your Ngrok token in .env file
-NGROK_AUTHTOKEN=your_token_here
+6. Add your Ngrok token in .env file
+   ```bash
+   NGROK_AUTHTOKEN=your_token_here
 
-5. Start the server
-npm start
+8. Start the server
+   ```bash
+   npm start
 
-6. Ngrok public URL will appear in terminal — share it!
+10. Ngrok public URL will appear in terminal — share it!
+    example:
+    ```bash
+    https://refinery-hatbox-shout.ngrok-free.dev/
 
 #Privacy
 All video/audio is streamed directly peer-to-peer. No media data touches the server.
