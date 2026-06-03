@@ -34,10 +34,10 @@ A browser-based peer-to-peer encrypted video calling app built with WebRTC, Node
    ```bash
    cp .env.example .env
 
-6. Add your Ngrok token and PORT in .env file
+6. Add your Ngrok token and PORT number in .env file
    ```bash
    NGROK_AUTHTOKEN=your_token_here
-   PORT=
+   PORT=your_port_number
 
 8. Start the server
    ```bash
