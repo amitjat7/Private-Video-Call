@@ -48,7 +48,8 @@ A browser-based peer-to-peer encrypted video calling app built with WebRTC, Node
     ```bash
     https://refinery-hatbox-shout.ngrok-free.dev/
 
-#Privacy
+## 🔒 Privacy
 All video/audio is streamed directly peer-to-peer. No media data touches the server.
-Made with ❤️ by Amit Choudhary
 
+---
+Made with ❤️ by Amit Choudhary
