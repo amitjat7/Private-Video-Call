@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Video Call</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js"></script>
+</head>
+<body>
 
+    <div id="notification-container" class="notification-container"></div>
+
+    <div class="container">
+        <h2>Instant Video Call</h2>
+        
+        <div id="setup-panel" class="card">
+            <div class="tab-buttons">
+                <button onclick="switchTab('create')" id="tab-create" class="active">Create Room</button>
+                <button onclick="switchTab('join')" id="tab-join">Join Room</button>
+            </div>
+
+            <div id="create-area" class="form-group">
+                <label>Your Name (4-15 Letters, Alphabets & Spaces):</label>
+                <input type="text" id="create-name" placeholder="Enter your name" maxlength="15">
+
+                <label>Encryption Code (Exact 8 digits):</label>
+                <input type="password" id="create-code" placeholder="Enter secure 8-digit number" maxlength="8">
+                
+                <label>Max Participants To Join:</label>
+                <select id="max-users">
+                    <option value="2">2 Members (1v1 Session)</option>
+                    <option value="3">3 Members</option>
+                    <option value="4">4 Members (Maximum)</option>
+                </select>
+                <button id="btn-create" onclick="actionCreateRoom()">
+                    <span class="btn-text">Create & Share Link</span>
+                    <div class="spinner d-none"></div>
+                </button>
+            </div>
+
+            <div id="join-area" class="form-group d-none">
+                <label>Your Name (4-15 Letters, Alphabets & Spaces):</label>
+                <input type="text" id="join-name" placeholder="Enter your name" maxlength="15">
+
+                <label>Enter Room Code:</label>
+                <input type="text" id="join-code" placeholder="Enter 8-digit room code" maxlength="8">
+                <button id="btn-join" onclick="actionJoinRoom()">
+                    <span class="btn-text">Join Session</span>
+                    <div class="spinner d-none"></div>
+                </button>
+            </div>
+        </div>
+
+        <div id="call-panel" class="card d-none">
+            <div class="video-grid" id="video-grid">
+                <div class="video-container" id="box-local">
+                    <video id="local-video" autoplay playsinline muted></video>
+                    <div class="camera-off-overlay d-none" id="local-cam-overlay">
+                        <i class="fas fa-video-slash"></i>
+                    </div>
+                    <div class="name-tag">
+                        <span id="local-name-tag">You</span>
+                        <i class="fas fa-microphone-slash mute-icon d-none" id="local-mute-icon"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="btn-mute" onclick="toggleMute()">Mute</button>
+                <button id="btn-camera" onclick="toggleCamera()">Stop Video</button>
+                <button id="btn-end" class="btn-danger" onclick="confirmEndCall()">End Call</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            <button class="btn-link" onclick="showToast('Privacy Policy: All video/audio calls are completely peer-to-peer encrypted. No user session data or media streaming content is ever monitored or stored on our servers.', 'info')">
+                Privacy Policy
+            </button>
+        </p>
+        <p>Made with ♥️ by Amit Choudhary</p>
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
