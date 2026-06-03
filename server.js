@@ -14,7 +14,7 @@ const io = socketIo(server, {
     transports: ['websocket', 'polling']
 });
 
-const PORT = process.env.PORT || 7026;
+const PORT = process.env.PORT || 3000;
 
 app.use('/api/', rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.static(path.join(__dirname, 'public')));
