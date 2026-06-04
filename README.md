@@ -19,6 +19,9 @@ A browser-based peer-to-peer encrypted video calling app built with WebRTC, Node
 ## 📋 Prerequisites
 - [Node.js](https://nodejs.org) installed
 - [Ngrok](https://ngrok.com) account & authtoken
+- Steps to get ngrok auth token:-
+- Go to https://ngrok.com, signup, tap on menu bar lie on top left or right of the site, you will see authtoken there, tap on authtoken and copy the token and now you can easily paste the it in your project.
+
 
 ## ⚙️ Setup
 1. Clone the repo
