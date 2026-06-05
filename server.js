@@ -76,22 +76,20 @@ io.on('connection', (socket) => {
         if (!room) return socket.emit('error-msg', 'Room closed or inactive.');
         if (room.users.length >= room.maxUsers) return socket.emit('error-msg', 'Room is full.');
 
-        // ── KEY FIX: Send existing users to the NEW joiner BEFORE announcing them ──
-        // The new joiner will be INITIATOR toward each existing user.
-        // Each existing user will be NON-INITIATOR (they receive 'user-connected').
+        
         const existingUsers = room.users.map(u => ({ userId: u.id, userName: u.name }));
         if (existingUsers.length > 0) {
             socket.emit('existing-users', { users: existingUsers });
         }
 
-        // Now add the new user and announce to everyone else
+        
         room.users.push({ id: socket.id, name: userName });
         socket.join(roomCode);
 
-        // Notify existing users — they become NON-INITIATOR
+        
         socket.to(roomCode).emit('user-connected', { userId: socket.id, userName });
 
-        // Reset/set session timeout
+        
         if (room.timeoutId) clearTimeout(room.timeoutId);
         room.timeoutId = setTimeout(() => {
             if (rooms[roomCode]) {
