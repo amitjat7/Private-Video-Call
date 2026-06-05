@@ -5,7 +5,6 @@ let myUserName = "";
 let peers = {};
 let pendingSignals = {};
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
 function showToast(message, type = "info") {
     const container = document.getElementById('notification-container');
     const toast = document.createElement('div');
@@ -19,7 +18,7 @@ function showToast(message, type = "info") {
     }, 4000);
 }
 
-// ─── UI HELPERS ──────────────────────────────────────────────────────────────
+
 function switchTab(type) {
     const isCreate = type === 'create';
     document.getElementById('tab-create').classList.toggle('active', isCreate);
@@ -53,7 +52,7 @@ function showCallPanel() {
     document.getElementById('call-panel').classList.remove('d-none');
 }
 
-// ─── MEDIA ───────────────────────────────────────────────────────────────────
+
 async function startMedia() {
     if (localStream) return;
     try {
@@ -68,7 +67,7 @@ async function startMedia() {
     }
 }
 
-// ─── ROOM ACTIONS ─────────────────────────────────────────────────────────────
+
 function actionCreateRoom() {
     const name = document.getElementById('create-name').value.trim();
     const code = document.getElementById('create-code').value;
@@ -92,7 +91,7 @@ function actionJoinRoom() {
     socket.emit('verify-room-code', { roomCode: code });
 }
 
-// ─── SOCKET: ROOM LIFECYCLE ──────────────────────────────────────────────────
+
 socket.on('room-created', async (code) => {
     try {
         await startMedia();
@@ -100,7 +99,7 @@ socket.on('room-created', async (code) => {
         navigator.clipboard.writeText(`${window.location.origin}?room=${code}`).catch(() => {});
         showToast(`Room [${code}] Created!`, "success");
         showToast("Share link copied to clipboard!", "info");
-        // JOIN the room — server will send back existing-users list (empty for first user)
+        
         socket.emit('join-room', { roomCode: code, userName: myUserName });
         showCallPanel();
     } catch (e) {}
@@ -111,19 +110,16 @@ socket.on('room-verified-ok', async () => {
     try {
         await startMedia();
         document.getElementById('local-name-tag').innerText = `${myUserName} (You)`;
-        // JOIN — server will respond with existing-users so WE initiate to each of them
+        
         socket.emit('join-room', { roomCode: currentRoomCode, userName: myUserName });
         showCallPanel();
     } catch (e) {}
     toggleLoading('btn-join', false);
 });
 
-// ── KEY FIX: Server sends existing users to the NEW joiner ──
-// New joiner becomes INITIATOR for each existing user.
-// Existing users get 'user-connected' and become NON-INITIATOR.
-// This ensures both sides create their peer correctly.
+
 socket.on('existing-users', ({ users }) => {
-    // users = [{userId, userName}, ...] already in the room
+    
     users.forEach(({ userId, userName }) => {
         console.log(`[existing-users] Creating initiator peer for ${userName} (${userId})`);
         createPeer(userId, true, userName);
@@ -131,15 +127,14 @@ socket.on('existing-users', ({ users }) => {
 });
 
 socket.on('user-connected', ({ userId, userName }) => {
-    // An existing user in the room gets this when someone new joins
-    // They become NON-INITIATOR — the joiner will initiate
+    
     showToast(`${userName} joined the call!`, "success");
     if (!localStream) return;
     console.log(`[user-connected] Creating non-initiator peer for ${userName} (${userId})`);
     createPeer(userId, false, userName);
 });
 
-// ─── PEER CREATION ───────────────────────────────────────────────────────────
+
 function createPeer(userId, initiator, userName) {
     if (peers[userId]) {
         try { peers[userId].destroy(); } catch (e) {}
@@ -170,7 +165,7 @@ function createPeer(userId, initiator, userName) {
         console.log(`[stream] Got remote stream from ${userName}`);
         addRemoteVideo(userId, remoteStream, userName);
         monitorVideoHealth(userId, remoteStream);
-        // Broadcast our current mute/cam state
+        
         const audio = localStream.getAudioTracks()[0];
         const video = localStream.getVideoTracks()[0];
         socket.emit('update-state', {
@@ -193,7 +188,7 @@ function createPeer(userId, initiator, userName) {
 
     peers[userId] = peer;
 
-    // Flush buffered signals
+    
     if (pendingSignals[userId]) {
         pendingSignals[userId].forEach(sig => { try { peer.signal(sig); } catch (e) {} });
         delete pendingSignals[userId];
@@ -202,19 +197,19 @@ function createPeer(userId, initiator, userName) {
     return peer;
 }
 
-// ─── SOCKET: SIGNALING ───────────────────────────────────────────────────────
+
 socket.on('signal', (data) => {
     const userId = data.from;
     const remoteName = data.remoteName || "Participant";
 
     if (!peers[userId]) {
         if (!localStream) {
-            // Not ready yet — buffer the signal
+            
             if (!pendingSignals[userId]) pendingSignals[userId] = [];
             pendingSignals[userId].push(data.signal);
             return;
         }
-        // Peer doesn't exist yet — create as non-initiator
+    
         createPeer(userId, false, remoteName);
     }
 
@@ -261,7 +256,7 @@ socket.on('error-msg', (msg) => {
     toggleLoading('btn-create', false);
 });
 
-// ─── VIDEO ELEMENT ────────────────────────────────────────────────────────────
+
 function addRemoteVideo(userId, stream, userName) {
     const existing = document.getElementById(`box-${userId}`);
     if (existing) {
@@ -316,7 +311,7 @@ function showUnmuteOverlay(container, video) {
     container.appendChild(btn);
 }
 
-// ─── FREEZE MONITOR ───────────────────────────────────────────────────────────
+
 function monitorVideoHealth(userId, stream) {
     const videoEl = document.querySelector(`#box-${userId} video`);
     if (!videoEl) return;
@@ -338,14 +333,13 @@ function monitorVideoHealth(userId, stream) {
     }, 4000);
 }
 
-// ─── RECONNECT ────────────────────────────────────────────────────────────────
+
 function attemptReconnect(userId, userName) {
     if (!localStream || !document.getElementById(`box-${userId}`)) return;
     socket.emit('request-reconnect', { to: userId, roomCode: currentRoomCode });
     createPeer(userId, true, userName);
 }
 
-// ─── CONTROLS ─────────────────────────────────────────────────────────────────
 function toggleMute() {
     const track = localStream?.getAudioTracks()[0];
     if (!track) return;
@@ -384,7 +378,7 @@ function cleanUpAndRedirect() {
     window.location.href = window.location.origin;
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+
 window.onload = () => {
     const room = new URLSearchParams(window.location.search).get('room');
     if (room) {
