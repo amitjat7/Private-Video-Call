@@ -2,89 +2,109 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instant Video Call</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Private Video Call</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js"></script>
 </head>
 <body>
 
-    <div id="notification-container" class="notification-container"></div>
+    <div id="notification-container"></div>
 
-    <div class="container">
-        <h2>Instant Video Call</h2>
-        
-        <div id="setup-panel" class="card">
-            <div class="tab-buttons">
-                <button onclick="switchTab('create')" id="tab-create" class="active">Create Room</button>
-                <button onclick="switchTab('join')" id="tab-join">Join Room</button>
+    <!-- ═══ SETUP PANEL ═══ -->
+    <div id="setup-panel" class="page">
+        <div class="setup-wrap">
+            <div class="brand">
+                <div class="brand-mark"><i class="fas fa-video"></i></div>
+                <h1 class="brand-title">Private Video Call</h1>
+                <p class="brand-sub">Private, peer-to-peer video sessions.<br>No accounts. No history. Just talk.</p>
             </div>
 
-            <div id="create-area" class="form-group">
-                <label>Your Name (4-15 Letters, Alphabets & Spaces):</label>
-                <input type="text" id="create-name" placeholder="Enter your name" maxlength="15">
+            <div class="card">
+                <div class="tabs">
+                    <button id="tab-create" class="tab active" onclick="if (!window.__cfRLUnblockHandlers) return false; switchTab('create')" data-cf-modified-8579f73239beee639ff052a0-="">Create Room</button>
+                    <button id="tab-join" class="tab" onclick="if (!window.__cfRLUnblockHandlers) return false; switchTab('join')" data-cf-modified-8579f73239beee639ff052a0-="">Join Room</button>
+                    <div class="tab-indicator"></div>
+                </div>
 
-                <label>Encryption Code (Exact 8 digits):</label>
-                <input type="password" id="create-code" placeholder="Enter secure 8-digit number" maxlength="8">
-                
-                <label>Max Participants To Join:</label>
-                <select id="max-users">
-                    <option value="2">2 Members (1v1 Session)</option>
-                    <option value="3">3 Members</option>
-                    <option value="4">4 Members (Maximum)</option>
-                </select>
-                <button id="btn-create" onclick="actionCreateRoom()">
-                    <span class="btn-text">Create & Share Link</span>
-                    <div class="spinner d-none"></div>
-                </button>
-            </div>
+                <!-- CREATE -->
+                <div id="create-area" class="tab-content">
+                    <label class="field-label">Your Name</label>
+                    <input id="create-name" type="text" class="input" placeholder="e.g. Amit Choudhary" maxlength="15" autocomplete="off">
 
-            <div id="join-area" class="form-group d-none">
-                <label>Your Name (4-15 Letters, Alphabets & Spaces):</label>
-                <input type="text" id="join-name" placeholder="Enter your name" maxlength="15">
-
-                <label>Enter Room Code:</label>
-                <input type="text" id="join-code" placeholder="Enter 8-digit room code" maxlength="8">
-                <button id="btn-join" onclick="actionJoinRoom()">
-                    <span class="btn-text">Join Session</span>
-                    <div class="spinner d-none"></div>
-                </button>
-            </div>
-        </div>
-
-        <div id="call-panel" class="card d-none">
-            <div class="video-grid" id="video-grid">
-                <div class="video-container" id="box-local">
-                    <video id="local-video" autoplay playsinline muted></video>
-                    <div class="camera-off-overlay d-none" id="local-cam-overlay">
-                        <i class="fas fa-video-slash"></i>
+                    <label class="field-label">Room Code <span class="hint">8 digits</span></label>
+                    <div class="code-row">
+                        <input id="create-code" type="text" class="input" placeholder="00000000" maxlength="8" inputmode="numeric" autocomplete="off">
+                        <button class="btn-ghost" onclick="if (!window.__cfRLUnblockHandlers) return false; generateCode()" title="Generate random code" data-cf-modified-8579f73239beee639ff052a0-=""><i class="fas fa-dice"></i></button>
                     </div>
-                    <div class="name-tag">
-                        <span id="local-name-tag">You</span>
-                        <i class="fas fa-microphone-slash mute-icon d-none" id="local-mute-icon"></i>
-                    </div>
+
+                    <label class="field-label">Participants</label>
+                    <select id="max-users" class="input select">
+                        <option value="2">2 people</option>
+                        <option value="3">3 people</option>
+                        <option value="4">4 people</option>
+                    </select>
+
+                    <button id="btn-create" class="btn-primary" onclick="if (!window.__cfRLUnblockHandlers) return false; actionCreateRoom()" data-cf-modified-8579f73239beee639ff052a0-="">
+                        <span class="spinner d-none"></span>
+                        <span class="btn-text">Create &amp; Share Link</span>
+                    </button>
+                </div>
+
+                <!-- JOIN -->
+                <div id="join-area" class="tab-content d-none">
+                    <label class="field-label">Your Name</label>
+                    <input id="join-name" type="text" class="input" placeholder="e.g. Amit Choudhary" maxlength="15" autocomplete="off">
+
+                    <label class="field-label">Room Code</label>
+                    <input id="join-code" type="text" class="input" placeholder="00000000" maxlength="8" inputmode="numeric" autocomplete="off">
+
+                    <button id="btn-join" class="btn-primary" onclick="if (!window.__cfRLUnblockHandlers) return false; actionJoinRoom()" data-cf-modified-8579f73239beee639ff052a0-="">
+                        <span class="spinner d-none"></span>
+                        <span class="btn-text">Join Session</span>
+                    </button>
                 </div>
             </div>
-            
-            <div class="controls">
-                <button id="btn-mute" onclick="toggleMute()">Mute</button>
-                <button id="btn-camera" onclick="toggleCamera()">Stop Video</button>
-                <button id="btn-end" class="btn-danger" onclick="confirmEndCall()">End Call</button>
-            </div>
+
+            <footer class="site-footer">
+                <a id="github-link" href="#" target="_blank" rel="noopener noreferrer" class="gh-link">
+                    <i class="fab fa-github"></i>
+                    <span>Developed by <strong id="github-handle">—</strong></span>
+                </a>
+            </footer>
         </div>
     </div>
 
-    <footer>
-        <p>
-            <button class="btn-link" onclick="showToast('Privacy Policy: All video/audio calls are completely peer-to-peer encrypted. No user session data or media streaming content is ever monitored or stored on our servers.', 'info')">
-                Privacy Policy
-            </button>
-        </p>
-        <p>Made with ♥️ by Amit Choudhary</p>
-    </footer>
+    <!-- ═══ CALL PANEL ═══ -->
+    <div id="call-panel" class="page d-none">
+        <div class="call-header">
+            <div class="call-info">
+                <span class="live-dot"></span>
+                <span id="room-label">Session Active</span>
+            </div>
+            <button class="btn-ghost small" onclick="if (!window.__cfRLUnblockHandlers) return false; copyInvite()" data-cf-modified-8579f73239beee639ff052a0-=""><i class="fas fa-link"></i> Copy Invite</button>
+        </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js"></script>
-</body>
+        <div id="video-grid">
+            <div class="video-container" id="local-box">
+                <video id="local-video" autoplay playsinline muted></video>
+                <div class="camera-off-overlay d-none" id="local-cam-overlay"><i class="fas fa-video-slash"></i></div>
+                <div class="name-tag">
+                    <span id="local-name-tag">You</span>
+                    <i class="fas fa-microphone-slash mute-icon d-none" id="local-mute-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-mute" class="ctrl-btn" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleMute()" data-cf-modified-8579f73239beee639ff052a0-="">Mute</button>
+            <button id="btn-camera" class="ctrl-btn" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleCamera()" data-cf-modified-8579f73239beee639ff052a0-="">Stop Video</button>
+            <button class="ctrl-btn danger" onclick="if (!window.__cfRLUnblockHandlers) return false; confirmEndCall()" data-cf-modified-8579f73239beee639ff052a0-="">End Call</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js" type="8579f73239beee639ff052a0-text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js" type="8579f73239beee639ff052a0-text/javascript"></script>
+    <script src="script.js" type="8579f73239beee639ff052a0-text/javascript"></script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="8579f73239beee639ff052a0-|49" defer></script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a186b1ce991f19a0',t:'MTc4MzU5MzQ1OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
